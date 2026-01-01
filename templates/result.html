@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction Result - Plant Leaf Disease Detection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌿 Plant Leaf Disease Detection</h1>
+            <p class="subtitle">Prediction Results</p>
+        </header>
+
+        <main>
+            <div class="result-section">
+                <div class="result-card">
+                    <div class="image-container">
+                        <h2>Uploaded Image</h2>
+                        <img src="{{ image_url }}" alt="Uploaded leaf image" class="result-image">
+                    </div>
+
+                    <div class="prediction-container">
+                        <h2>Prediction Result</h2>
+                        
+                        <div class="prediction-main">
+                            <div class="prediction-label">Predicted Disease:</div>
+                            <div class="prediction-value">{{ predicted_class }}</div>
+                            <div class="confidence-bar">
+                                <div class="confidence-label">Confidence: {{ confidence }}%</div>
+                                <div class="confidence-progress">
+                                    <div class="confidence-fill" style="width: {{confidence}}%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="all-predictions">
+                            <h3>Top Predictions</h3>
+                            <div class="predictions-list">
+                                {% for pred in all_predictions %}
+                                <div class="prediction-item">
+                                    <span class="pred-class">{{ pred.class }}</span>
+                                    <span class="pred-confidence">{{ "%.2f"|format(pred.confidence * 100) }}%</span>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="action-buttons">
+                            <a href="/" class="btn-primary">Analyze Another Image</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h2>What to do next?</h2>
+                <div class="info-cards">
+                    <div class="info-card">
+                        <h3>📋 Verify Diagnosis</h3>
+                        <p>Consult with agricultural experts to confirm the diagnosis</p>
+                    </div>
+                    <div class="info-card">
+                        <h3>💊 Treatment Options</h3>
+                        <p>Research appropriate treatment methods for the detected disease</p>
+                    </div>
+                    <div class="info-card">
+                        <h3>🌱 Preventive Measures</h3>
+                        <p>Implement preventive measures to protect other plants</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Powered by Deep Learning (CNN with MobileNetV2)</p>
+        </footer>
+    </div>
+</body>
+</html>
+

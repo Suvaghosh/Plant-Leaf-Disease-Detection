@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plant Leaf Disease Detection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌿 Plant Leaf Disease Detection</h1>
+            <p class="subtitle">Upload a leaf image to detect and classify diseases using Deep Learning</p>
+        </header>
+
+        <main>
+            <div class="upload-section">
+                <form action="/predict" method="POST" enctype="multipart/form-data" id="uploadForm">
+                    <div class="upload-box" id="uploadBox">
+                        <input type="file" id="fileInput" name="file" accept="image/*" required>
+                        <label for="fileInput" class="upload-label">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17 8 12 3 7 8"></polyline>
+                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                            </svg>
+                            <span class="upload-text">Click to select or drag and drop</span>
+                            <span class="upload-hint">PNG, JPG, JPEG up to 10MB</span>
+                        </label>
+                        <div class="preview-container" id="previewContainer" style="display: none;">
+                            <img id="previewImage" src="" alt="Preview">
+                            <button type="button" class="remove-btn" id="removeBtn">×</button>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn" id="submitBtn" disabled>
+                        <span>Analyze Leaf Image</span>
+                    </button>
+                </form>
+            </div>
+
+            <div class="info-section">
+                <h2>How it works</h2>
+                <div class="info-cards">
+                    <div class="info-card">
+                        <div class="info-icon">1</div>
+                        <h3>Upload Image</h3>
+                        <p>Select a clear image of a plant leaf</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon">2</div>
+                        <h3>AI Analysis</h3>
+                        <p>Our CNN model analyzes the image</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon">3</div>
+                        <h3>Get Results</h3>
+                        <p>Receive disease classification and confidence score</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Flash messages -->
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for message in messages %}
+                            <div class="flash-message error">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+        </main>
+
+        <footer>
+            <p>Powered by Deep Learning (CNN with MobileNetV2)</p>
+        </footer>
+    </div>
+
+    <script>
+        // File input handling
+        const fileInput = document.getElementById('fileInput');
+        const uploadBox = document.getElementById('uploadBox');
+        const previewContainer = document.getElementById('previewContainer');
+        const previewImage = document.getElementById('previewImage');
+        const removeBtn = document.getElementById('removeBtn');
+        const submitBtn = document.getElementById('submitBtn');
+        const uploadForm = document.getElementById('uploadForm');
+
+        // Handle file selection
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImage.src = e.target.result;
+                    previewContainer.style.display = 'block';
+                    uploadBox.querySelector('.upload-label').style.display = 'none';
+                    submitBtn.disabled = false;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Remove preview
+        removeBtn.addEventListener('click', function() {
+            fileInput.value = '';
+            previewContainer.style.display = 'none';
+            uploadBox.querySelector('.upload-label').style.display = 'flex';
+            submitBtn.disabled = true;
+        });
+
+        // Drag and drop
+        uploadBox.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            uploadBox.classList.add('drag-over');
+        });
+
+        uploadBox.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            uploadBox.classList.remove('drag-over');
+        });
+
+        uploadBox.addEventListener('drop', function(e) {
+            e.preventDefault();
+            uploadBox.classList.remove('drag-over');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                fileInput.dispatchEvent(new Event('change'));
+            }
+        });
+
+        // Form submission loading state
+        uploadForm.addEventListener('submit', function() {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span>Analyzing...</span>';
+        });
+    </script>
+</body>
+</html>
+
